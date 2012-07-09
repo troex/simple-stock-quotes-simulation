@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Socket.IO rate fetcher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: monospace; }
+    #pairs > div       { clear: both; }
+    #pairs > div > div { float: left; width: 80px; }
+    .pair              {}
+    .value, .diff      { text-align: right; }
+    .diff.up           { color: #008000; }
+    .diff.down         { color: #800040; }
+  </style>
+</head>
+<body>
+  <div id="pairs"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" ></script>
+  <script>
+    var socket = io.connect(window.location.origin);
+    socket.on('pair', function (data) {
+      var ts    = data[0]
+        , rate  = data[1]
+        , value = data[2]
+        , id    = 'pair_' + rate.replace('/', '_')
+        , el    = $('#' + id);
+      //console.log(rate, value, id);
+      if (el.length > 0) {
+        var prev_value = el.find('.value').text();
+        var diff = prev_value - value;
+        el.find('.value').text(value);
+        el.find('.diff')
+          .text((diff > 0 ? '+' : '') + diff.toFixed(4))
+          .removeClass(diff > 0 ? 'down' : 'up')
+          .addClass(diff > 0 ? 'up' : 'down')
+          .show()
+          .fadeOut(500);
+      } else {
+        $('#pairs').append('<div id="' + id + '"><div class="pair">' + rate + '</div><div class="value">' + value + '</div><div class="diff"></div></div>');
+      }
+    });
+  </script>
+</body>
+</html>
+
