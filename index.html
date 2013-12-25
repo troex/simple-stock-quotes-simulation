@@ -39,6 +39,9 @@
           .fadeOut(500);
       } else {
         $('#pairs').append('<div id="' + id + '"><div class="pair">' + rate + '</div><div class="value">' + value + '</div><div class="diff"></div></div>');
+        $('#pairs > div').sort(function(a,b) {
+          return $(a).attr('id') > $(b).attr('id') ? 1 : -1;
+        }).appendTo('#pairs');
       }
     });
   </script>
